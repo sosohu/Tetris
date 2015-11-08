@@ -1,0 +1,13 @@
+#Filter file
+*.o
+*.a
+*.so
+*.swp
+*.log
+*.tar.gz
+test/test
+
+#Filter folder
+data/
+lib/
+log/
