@@ -47,6 +47,18 @@ const size_t SquareFrameRX = 2;
 const size_t SquareFrameRY = 2;
 const size_t SquareFrameScale = 30;
 
+const size_t NextFrameWidth = 5;
+const size_t NextFrameHeight = 5;
+const size_t NextFrameRX = 330;
+const size_t NextFrameRY = 10;
+const size_t NextFrameScale = 30;
+
+const size_t ScoreFrameWidth = 150;
+const size_t ScoreFrameHeight = 50;
+const size_t ScoreFrameRX = 330;
+const size_t ScoreFrameRY = 400;
+const size_t ScoreFrameScale = 1;
+
 typedef unsigned char BodyStatus;
 const BodyStatus START = 0;
 const BodyStatus FOLLOW = 1;

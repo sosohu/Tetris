@@ -15,6 +15,7 @@
 #include "log.h"
 #include "bitset.h"
 #include "brick.h"
+#include "hstring.h"
 #include <cstring>
 #include <cstdlib>
 
@@ -37,7 +38,7 @@ class SquareFrame : public Frame {
 friend int drawSquareFrame(SquareFrame &f);
 
 public:
-	SquareFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale, Color m_color, Color m_square_color) : 
+	SquareFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale, Color m_color = GRAY, Color m_square_color = BLACK) : 
 		Frame(m_width, m_height, m_x, m_y, m_scale, m_color), m_square_color(m_square_color) {
 		m_size = ( m_width * m_height) / 8 + 1 ;
 		m_data_ptr = static_cast < unsigned char* > ( malloc( m_size ) );
@@ -72,7 +73,7 @@ public:
 
 	void setFrameColor(const Color &edge, const Color &square, const Color &background);
 
-	void clearLine(const Brick &follow_brick, size_t follow_i, size_t follow_j);
+	size_t clearLine(const Brick &follow_brick, size_t follow_i, size_t follow_j);
 
 	void computeHeights();
 
@@ -104,17 +105,40 @@ private:
 };
 
 class ScoreFrame : public Frame {
+friend int drawScoreFrame(ScoreFrame &f);
 public:
-	//ScoreFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale) : 
-	//	Frame(m_width, m_height, m_x, m_y, m_scale) {}
-	ScoreFrame() = default;
+	ScoreFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale, Color m_color = WHITE, Color m_text_color = BLACK) : 
+		Frame(m_width, m_height, m_x, m_y, m_scale, m_color), 
+		m_text("Score:  "), m_score("00000"), m_text_color(m_text_color) {}
+
+	void setFrameColor(const Color &text, const Color &background);
+
+	void addScore(size_t n = 1) {
+		strNumAddU(m_score, 5, n);
+	}
+
+private:
+	const std::string m_text;
+	std::string m_score;
+	Color m_text_color;
 };
 
 class NextFrame : public Frame {
+friend int drawNextFrame(NextFrame &f);
 public:
-	//NextFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale) : 
-	//	Frame(m_width, m_height, m_x, m_y, m_scale) {}
-	NextFrame() = default;
+	NextFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale, Color c = GRAY, Color m_square_color = BLACK) :
+		Frame(m_width, m_height, m_x, m_y, m_scale, c), m_square_color(m_square_color) {}
+
+	void setBrick(const Brick &brick){
+		m_brick = brick;
+	}
+
+	void setFrameColor(const Color &edge, const Color &square, const Color &background);
+	
+private:
+	Brick m_brick;
+	Color m_square_color;
+	Color m_edge_color;
 };
 
 //class BodyFrame;
@@ -125,19 +149,26 @@ class BodyFrame : public Frame {
 friend int drawBodyFrame(BodyFrame &f);
 
 public:
-	BodyFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale = 1, Color m_color = Color(255, 0, 0), Color m_squre_color = Color(0, 0, 255)) : 
+	BodyFrame(size_t m_width, size_t m_height, size_t m_x, size_t m_y, size_t m_scale = 1, Color m_color = BLACK, Color m_squre_color = GRAY) : 
 		Frame(m_width, m_height, m_x, m_y, m_scale, m_color), 
-		m_square(SquareFrameWidth, SquareFrameHeight, m_x + SquareFrameRX, m_y + SquareFrameRY, SquareFrameScale, m_color, m_squre_color) {
+		m_square(SquareFrameWidth, SquareFrameHeight, m_x + SquareFrameRX, m_y + SquareFrameRY, SquareFrameScale),
+		m_next(NextFrameWidth, NextFrameHeight, m_x + NextFrameRX, m_y + NextFrameRY,
+NextFrameScale),
+		m_score(ScoreFrameWidth, ScoreFrameHeight, m_x + ScoreFrameRX, m_y + ScoreFrameRY,
+ScoreFrameScale){
 		//PRINT_MSG("%d, %d, %d, %d, %d", m_width, m_height, m_x, m_y, m_scale);
 		m_status = START;
 		m_follow_brick = genRandBrick();
 		m_follow_i = 0; // line
 		m_follow_j = m_square.m_width / 2 - 2; // col
 		m_next_brick = genRandBrick();
+		m_next.setBrick(m_next_brick);
 	}
 
 	void setBodyFrameColor(const Color &c);
 	void setSquareFrameColor(const Color &edge, const Color &square, const Color &background);
+	void setNextFrameColor(const Color &edge, const Color &square, const Color &background);
+	void setScoreFrameColor(const Color &text, const Color &background);
 
 	bool isOver() const { return m_status == OVER; }
 
@@ -161,13 +192,13 @@ private:
 
 private:
 	SquareFrame m_square;
-	//ScoreFrame m_score;
-	//NextFrame m_next;
+	ScoreFrame m_score;
+	NextFrame m_next;
 	BodyStatus m_status;
 	Brick m_follow_brick;
 	Brick m_next_brick;
 	size_t m_follow_i;  // line
-	size_t m_follow_j;  // col
+	int m_follow_j;  // col
 	size_t m_follow_life; // how long it will meet
 };
 #endif

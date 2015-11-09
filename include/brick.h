@@ -63,6 +63,10 @@ public:
 	bool isSet(size_t i, size_t j) const {
 		return isSetBit(reinterpret_cast<const unsigned char*>(&m_data[m_status]), i + j * 4);
 	}
+
+	bool isEmpty(size_t col){
+		return (m_data[m_status] & (0xf << col * 4)) == 0x0;
+	}
 protected:
 	BrickStatus m_status;
 	BrickType m_type; // lower 7 bit represent the type of Brick

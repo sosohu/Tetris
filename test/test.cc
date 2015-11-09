@@ -19,6 +19,8 @@ void Initial(void){
 	
 	bf.setBodyFrameColor(PURPLE);
 	bf.setSquareFrameColor(BLACK, BLACK, GRAY);
+	bf.setNextFrameColor(BLACK, BLACK, GRAY);
+	bf.setScoreFrameColor(BLACK, GRAY);
 }
 
 void ChangeSize(int w, int h){
@@ -55,8 +57,8 @@ void Display(void){
 void specialKeyFunc(int key,int x,int y){
 	pLog->Print(DEBUG, "Special Key: %d", key);
 	switch(key){
-		case GLUT_KEY_LEFT:	bf.rightShift(); break;
-		case GLUT_KEY_RIGHT:	bf.leftShift(); break;
+		case GLUT_KEY_LEFT:	bf.leftShift(); break;
+		case GLUT_KEY_RIGHT:	bf.rightShift(); break;
 		case GLUT_KEY_DOWN:	bf.downShift(); break;
 		default:	;
 	}
