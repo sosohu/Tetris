@@ -21,25 +21,39 @@ const BrickData RZ_BRICK_DATA[] = { 0x132, 0x630, 0x264, 0x63 };
 const BrickData UP_BRICK_DATA[] = { 0x232, 0x270, 0x262, 0x72 };
 const BrickData Z_BRICK_DATA[] = { 0x231, 0x360, 0x462, 0x36 };
 
-typedef char BrickType;
-const BrickType LINE_BRICK_TYPE = 0x1;
-const BrickType L_BRICK_TYPE = 0x2;
-const BrickType RL_BRICK_TYPE = 0x4;
-const BrickType SQUARE_BRICK_TYPE = 0x8;
-const BrickType RZ_BRICK_TYPE = 0x16;
-const BrickType UP_BRICK_TYPE = 0x32;
-const BrickType Z_BRICK_TYPE = 0x64;
+typedef const BrickData* BrickDataPtr;
+const BrickDataPtr BRICK_DATA[] = { LINE_BRICK_DATA, L_BRICK_DATA, RL_BRICK_DATA, 
+								  SQUARE_BRICK_DATA, RZ_BRICK_DATA, UP_BRICK_DATA, Z_BRICK_DATA};
 
-typedef char BrickStatus;
+typedef char BrickType;
+const size_t BrickTypeNum = 6;
+const BrickType LINE_BRICK_TYPE = 0x0;
+const BrickType L_BRICK_TYPE = 0x1;
+const BrickType RL_BRICK_TYPE = 0x2;
+const BrickType SQUARE_BRICK_TYPE = 0x3;
+const BrickType RZ_BRICK_TYPE = 0x4;
+const BrickType UP_BRICK_TYPE = 0x5;
+const BrickType Z_BRICK_TYPE = 0x6;
+
+typedef unsigned char BrickStatus;
 const BrickStatus	UP = 0;
 const BrickStatus	RIGHT = 1;
 const BrickStatus	DOWN = 2;
 const BrickStatus 	LEFT = 3;
 
+const size_t BRICK_WIDTH[] = {4, 3, 3, 2, 3, 3, 3};
+
 const size_t SquareFrameWidth = 10;
-const size_t SquareFrameHeight = 20;
-const size_t SquareFrameRX = 20;
-const size_t SquareFrameRY = 20;
-const size_t SquareFrameScale = 50;
+const size_t SquareFrameHeight = 17;
+const size_t SquareFrameRX = 2;
+const size_t SquareFrameRY = 2;
+const size_t SquareFrameScale = 30;
+
+typedef unsigned char BodyStatus;
+const BodyStatus START = 0;
+const BodyStatus FOLLOW = 1;
+const BodyStatus MERGE = 2;
+const BodyStatus NEXT = 3;
+const BodyStatus OVER = 9;
 
 #endif

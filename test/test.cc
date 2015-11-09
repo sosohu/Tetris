@@ -1,21 +1,25 @@
 #include <GL/glut.h>
 #include "frame.h"
 #include "graph.h"
+#include "alarm.h"
+#include "log.h"
 #include <iostream>
 
 using namespace std;
 
-const int X = 100;
-const int Y = 100;
-const int WIDTH = 800;
-const int HEIGHT = 1400;
+const int X = 0;
+const int Y = 0;
+const int WIDTH = 500;
+const int HEIGHT = 600;
 
-BodyFrame bf(700, 1300, X + 50, Y + 50);
+BodyFrame bf(WIDTH, HEIGHT, X, Y);
 
 void Initial(void){
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+	
+	bf.setBodyFrameColor(PURPLE);
+	bf.setSquareFrameColor(BLACK, BLACK, GRAY);
 }
-
 
 void ChangeSize(int w, int h){
 	int winWidth = w;
@@ -26,12 +30,44 @@ void ChangeSize(int w, int h){
 	gluOrtho2D(0.0, winWidth, 0.0, winHeight);
 }
 
+Log *pLog = Log::getLogInstance();
+
+void alarm_func(int signo){
+	bf.update();
+	pLog->Print(DEBUG, "alarm_func exec");
+	alarm(1);
+	drawBodyFrame(bf);
+	glutSwapBuffers();
+}
+
+Alarm alarmObj(alarm_func, 1);
+
 void Display(void){
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	drawBodyFrame(bf);
+	alarmObj.start();
 
-	glutSwapBuffers();
+	//drawBodyFrame(bf);
+
+	//glutSwapBuffers();
+}
+
+void specialKeyFunc(int key,int x,int y){
+	pLog->Print(DEBUG, "Special Key: %d", key);
+	switch(key){
+		case GLUT_KEY_LEFT:	bf.rightShift(); break;
+		case GLUT_KEY_RIGHT:	bf.leftShift(); break;
+		case GLUT_KEY_DOWN:	bf.downShift(); break;
+		default:	;
+	}
+}
+
+void normalKeyFunc(unsigned char key, int x, int y){
+	pLog->Print(DEBUG, "Normal Key: %d", key);
+	switch(key){
+		case 32: bf.changeFollow(); break;
+		default:	;
+	}
 }
 
 
@@ -89,12 +125,14 @@ void PassiveMouseMove(GLint xMouse, GLint yMouse){
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(1000, 2000);
+	glutInitWindowSize(WIDTH, HEIGHT);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("俄罗斯方块");
 	glutDisplayFunc(&Display);
 
 	glutReshapeFunc(ChangeSize);//回调函数
+	glutSpecialFunc(&specialKeyFunc);
+	glutKeyboardFunc(&normalKeyFunc);
 	//glutMouseFunc(MousePlot);//指定鼠标点击响应函数
 	//glutPassiveMotionFunc(PassiveMouseMove);//指定鼠标移动响应函数
 	Initial();

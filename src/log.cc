@@ -38,8 +38,9 @@ void Log::print(PriorityLevel level, std::string format, ...) {
 	case DEBUG:
 		Debug(message.c_str());
 		break;
-	case NOTSET:        
-		//break;
+	case NOTSET:
+		Notset(message.c_str());
+		break;
 	default:
 		Warn(message.c_str());
 		break;

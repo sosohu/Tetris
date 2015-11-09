@@ -6,6 +6,12 @@
 #include <cstdio>
 #include <cstdarg>
 
+#ifdef FULL_LOG
+#define Print(level, format, args...)  print(level, "%s, %d, %s:\n" format, __FILE__, __LINE__, __func__, ##args)
+#else
+#define Print(level, format, args...)  print(level, "%s, %d: " format, __func__, __LINE__, ##args)
+#endif
+
 enum PriorityLevel
 {    
     EMERG,                        //EMERG  = 0,
@@ -43,6 +49,10 @@ public:
 			delete ptr;
 			ptr = NULL;
 		}
+	}
+
+	void Notset(const char* msg) {
+		
 	}
 
 	void Debug(const char* msg) {
