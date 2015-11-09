@@ -45,9 +45,6 @@ public:
 		if(cur >= 1)	return 1;
 		return 0;
 	}
-
-	size_t getWidth() const {
-	}
 	
 	size_t getLeftPadding() const{
 		for(size_t i = 0; i < 4; i++){

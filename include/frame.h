@@ -145,11 +145,11 @@ public:
 
 	void pressUpdate();
 
-	void leftShift(size_t n = 1);
+	void leftShift();
 
-	void rightShift(size_t n = 1);
+	void rightShift();
 
-	void downShift(size_t n = 1);
+	void downShift();
 
 	void changeFollow();
 

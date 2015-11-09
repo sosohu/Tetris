@@ -160,29 +160,39 @@ void BodyFrame::update() {
 	//m_square.printData();
 }
 
-void BodyFrame::leftShift(size_t n){
-	uneliminate();
-	if(m_follow_j + m_follow_brick.getLeftPadding() >= n){
-		m_follow_j -= n;
-	}else{
-		 m_follow_j = 0;
+void BodyFrame::leftShift(){
+	size_t padding = m_follow_brick.getLeftPadding();
+	if(m_follow_j + padding >= 1){
+		size_t leftj = m_follow_j - 1 + padding;
+		for(size_t i = m_follow_i; i < m_follow_i + 4; i++){
+			if(m_square.isSet(i, leftj) && m_follow_brick.isSet(i - m_follow_i, padding)){
+				return;
+			}
+		}
+		uneliminate();
+		m_follow_j -= 1;
+		computeLife();
+		eliminate();
 	}
-	computeLife();
-	eliminate();
 }
 
-void BodyFrame::rightShift(size_t n){
-	uneliminate();
-	if(m_follow_j + n + 4 - m_follow_brick.getRightPadding() <= m_square.m_width){
-		m_follow_j += n;
-	}else{
-		m_follow_j = m_square.m_width - (4 - m_follow_brick.getRightPadding());
+void BodyFrame::rightShift(){
+	size_t padding = m_follow_brick.getRightPadding();
+	if(m_follow_j + 1 + 4 - padding <= m_square.m_width){
+		size_t rightj = m_follow_j + 4 - padding;
+		for(size_t i = m_follow_i; i < m_follow_i + 4; i++){
+			if(m_square.isSet(i, rightj) && m_follow_brick.isSet(i - m_follow_i, 3 - padding)){
+				return;
+			}
+		}
+		uneliminate();
+		m_follow_j += 1;
+		computeLife();
+		eliminate();
 	}
-	computeLife();
-	eliminate();
 }
 
-void BodyFrame::downShift(size_t n){
+void BodyFrame::downShift(){
 	if(m_status == FOLLOW){
 		uneliminate();
 		++m_follow_i;
