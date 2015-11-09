@@ -41,8 +41,6 @@ const BrickStatus	RIGHT = 1;
 const BrickStatus	DOWN = 2;
 const BrickStatus 	LEFT = 3;
 
-const size_t BRICK_WIDTH[] = {4, 3, 3, 2, 3, 3, 3};
-
 const size_t SquareFrameWidth = 10;
 const size_t SquareFrameHeight = 17;
 const size_t SquareFrameRX = 2;

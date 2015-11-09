@@ -47,7 +47,20 @@ public:
 	}
 
 	size_t getWidth() const {
-		return BRICK_WIDTH[m_type];
+	}
+	
+	size_t getLeftPadding() const{
+		for(size_t i = 0; i < 4; i++){
+			if((m_data[m_status] & (0xf << i*4)) != 0x0)	return i;
+		}
+		return 4;
+	}
+
+	size_t getRightPadding() const{
+		for(int i = 3; i >= 0; i--){
+			if((m_data[m_status] & (0xf << i*4)) != 0x0)	return 3 - i;
+		}
+		return 4;
 	}
 
 	bool isSet(size_t i, size_t j) const {

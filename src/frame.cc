@@ -82,10 +82,12 @@ void BodyFrame::computeLife(){
 	m_follow_life = m_square.m_height;
 	pLog->Print(DEBUG, "m_follow_life: %d", m_follow_life);
 	for(size_t j = 0; j < 4; j++){
-		size_t h = m_follow_i + (m_follow_brick.getLineHeight(j));
-		pLog->Print(DEBUG, "h: %d", h);
-		m_follow_life = std::min(m_follow_life, m_square.m_height - h - m_square.m_col_heights[m_follow_j + j]);
-		pLog->Print(DEBUG, "m_follow_life: %d", m_follow_life);
+		if(m_follow_j + j >= 0 && m_follow_j + j < m_square.m_width){
+			size_t h = m_follow_i + (m_follow_brick.getLineHeight(j));
+			pLog->Print(DEBUG, "h: %d", h);
+			m_follow_life = std::min(m_follow_life, m_square.m_height - h - m_square.m_col_heights[m_follow_j + j]);
+			pLog->Print(DEBUG, "m_follow_life: %d", m_follow_life);
+		}
 	}
 }
 
@@ -100,7 +102,9 @@ void BodyFrame::eliminate() {
 	for(size_t i = 0; i < 4; i++){
 		for(size_t j = 0; j < 4; j++){
 			if(m_follow_brick.isSet(i, j)){
-				m_square.setData(m_follow_i + i, m_follow_j + j);
+				if(m_follow_j + j >= 0 && m_follow_j + j < m_square.m_width){
+					m_square.setData(m_follow_i + i, m_follow_j + j);
+				}
 			}
 		}
 	}
@@ -110,7 +114,9 @@ void BodyFrame::uneliminate() {
 	for(size_t i = 0; i < 4; i++){
 		for(size_t j = 0; j < 4; j++){
 			if(m_follow_brick.isSet(i, j)){
-				m_square.unSetData(m_follow_i + i, m_follow_j + j);
+				if(m_follow_j + j >= 0 && m_follow_j + j < m_square.m_width){
+					m_square.unSetData(m_follow_i + i, m_follow_j + j);
+				}
 			}
 		}
 	}
@@ -156,7 +162,7 @@ void BodyFrame::update() {
 
 void BodyFrame::leftShift(size_t n){
 	uneliminate();
-	if(m_follow_j >= n){
+	if(m_follow_j + m_follow_brick.getLeftPadding() >= n){
 		m_follow_j -= n;
 	}else{
 		 m_follow_j = 0;
@@ -167,10 +173,10 @@ void BodyFrame::leftShift(size_t n){
 
 void BodyFrame::rightShift(size_t n){
 	uneliminate();
-	if(m_follow_j + n + m_follow_brick.getWidth() <= m_square.m_width){
+	if(m_follow_j + n + 4 - m_follow_brick.getRightPadding() <= m_square.m_width){
 		m_follow_j += n;
 	}else{
-		m_follow_j = m_square.m_width - m_follow_brick.getWidth();
+		m_follow_j = m_square.m_width - (4 - m_follow_brick.getRightPadding());
 	}
 	computeLife();
 	eliminate();
