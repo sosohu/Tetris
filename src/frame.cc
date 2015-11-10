@@ -158,7 +158,11 @@ void BodyFrame::update() {
 		case START: {
 			pLog->Print(DEBUG, "Status START");
 			computeLife();
-			m_status = FOLLOW;
+			if(!m_follow_life){
+				m_status = OVER;
+			}else{
+				m_status = FOLLOW;
+			}
 		} break;
 		case FOLLOW: {
 			pLog->Print(DEBUG, "Status FOLLOW");
@@ -185,34 +189,38 @@ void BodyFrame::update() {
 }
 
 void BodyFrame::leftShift(){
-	size_t padding = m_follow_brick.getLeftPadding();
-	if(m_follow_j + int(padding) >= 1){
-		size_t leftj = m_follow_j - 1 + padding;
-		for(size_t i = m_follow_i; i < m_follow_i + 4; i++){
-			if(m_square.isSet(i, leftj) && m_follow_brick.isSet(i - m_follow_i, padding)){
-				return;
+	if(!isOver()){
+		size_t padding = m_follow_brick.getLeftPadding();
+		if(m_follow_j + int(padding) >= 1){
+			size_t leftj = m_follow_j - 1 + padding;
+			for(size_t i = m_follow_i; i < m_follow_i + 4; i++){
+				if(m_square.isSet(i, leftj) && m_follow_brick.isSet(i - m_follow_i, padding)){
+					return;
+				}
 			}
+			uneliminate();
+			m_follow_j -= 1;
+			computeLife();
+			eliminate();
 		}
-		uneliminate();
-		m_follow_j -= 1;
-		computeLife();
-		eliminate();
 	}
 }
 
 void BodyFrame::rightShift(){
-	size_t padding = m_follow_brick.getRightPadding();
-	if(m_follow_j + 1 + 4 - int(padding) <= int(m_square.m_width)){
-		size_t rightj = m_follow_j + 4 - padding;
-		for(size_t i = m_follow_i; i < m_follow_i + 4; i++){
-			if(m_square.isSet(i, rightj) && m_follow_brick.isSet(i - m_follow_i, 3 - padding)){
-				return;
+	if(!isOver()){
+		size_t padding = m_follow_brick.getRightPadding();
+		if(m_follow_j + 1 + 4 - int(padding) <= int(m_square.m_width)){
+			size_t rightj = m_follow_j + 4 - padding;
+			for(size_t i = m_follow_i; i < m_follow_i + 4; i++){
+				if(m_square.isSet(i, rightj) && m_follow_brick.isSet(i - m_follow_i, 3 - padding)){
+					return;
+				}
 			}
+			uneliminate();
+			m_follow_j += 1;
+			computeLife();
+			eliminate();
 		}
-		uneliminate();
-		m_follow_j += 1;
-		computeLife();
-		eliminate();
 	}
 }
 
@@ -229,17 +237,19 @@ void BodyFrame::downShift(){
 }
 
 void BodyFrame::changeFollow(){
-	uneliminate();
-	m_follow_brick.rorate();
-	computeLife();
-	eliminate();
-	
-	while(int(m_follow_brick.getLeftPadding()) + m_follow_j < 0){
-		rightShift();
-	}
+	if(m_status == FOLLOW){
+		uneliminate();
+		m_follow_brick.rorate();
+		computeLife();
+		eliminate();
+		
+		while(int(m_follow_brick.getLeftPadding()) + m_follow_j < 0){
+			rightShift();
+		}
 
-	while(int(4 - m_follow_brick.getRightPadding()) + m_follow_j >= int(m_square.m_width)){
-		leftShift();
+		while(int(4 - m_follow_brick.getRightPadding()) + m_follow_j >= int(m_square.m_width)){
+			leftShift();
+		}
 	}
 }
 
